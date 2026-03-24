@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBIC 平台系統原型示意</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .sidebar-active {
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            border-right: 4px solid #1d4ed8;
+        }
+        .reader-overlay {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        /* 模擬禁止右鍵與選取 */
+        .no-copy {
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- 側邊導覽列 -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0">
+        <div class="p-6 border-b border-slate-100">
+            <h1 class="text-2xl font-bold text-blue-600">EBIC <span class="text-slate-400 font-normal">CRM</span></h1>
+            <p class="text-xs text-slate-500 mt-1">主日學教材管理系統</p>
+        </div>
+        
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">教會管理員端</p>
+            <button onclick="showScreen('screen-admin-library')" id="btn-screen-admin-library" class="sidebar-item sidebar-active w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all hover:bg-slate-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                <span>教會書庫</span>
+            </button>
+            <button onclick="showScreen('screen-admin-users')" id="btn-screen-admin-users" class="sidebar-item w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all hover:bg-slate-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                <span>教師綁定管理</span>
+            </button>
+
+            <div class="pt-4 mt-4 border-t border-slate-100"></div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">受邀教師端</p>
+            <button onclick="showScreen('screen-teacher-library')" id="btn-screen-teacher-library" class="sidebar-item w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all hover:bg-slate-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9l-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                <span>我的書庫</span>
+            </button>
+
+            <div class="pt-4 mt-4 border-t border-slate-100"></div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">閱讀器演示</p>
+            <button onclick="showScreen('screen-reader')" id="btn-screen-reader" class="sidebar-item w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all hover:bg-slate-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <span>安全閱讀器</span>
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-slate-100">
+            <div class="flex items-center gap-3 p-2">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">管</div>
+                <div class="overflow-hidden">
+                    <p class="text-sm font-medium truncate">聖光教會管理員</p>
+                    <p class="text-xs text-slate-400 truncate">admin@st-light.org</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主要內容區 -->
+    <main class="flex-1 flex flex-col overflow-hidden bg-slate-50 relative">
+        
+        <!-- 畫面一：教會書庫總覽 (Admin Library) -->
+        <section id="screen-admin-library" class="screen-content flex-1 overflow-y-auto p-8">
+            <header class="mb-8">
+                <h2 class="text-2xl font-bold text-slate-800">教會書庫</h2>
+                <p class="text-slate-500">此為聖光教會目前擁有的教材資產與授權狀態</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 套書卡片 1 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="h-48 bg-blue-50 flex items-center justify-center relative">
+                        <span class="absolute top-3 left-3 bg-blue-600 text-white text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest">2024 年度套裝</span>
+                        <div class="text-blue-200 italic font-serif text-6xl">EBIC</div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg mb-1">主日學教材：幼兒級 A 冊</h3>
+                        <p class="text-slate-400 text-sm mb-4">適用年齡：3-5 歲</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-end text-sm">
+                                <span class="text-slate-600">團隊版授權狀態</span>
+                                <span class="font-bold text-blue-600">3 / 4 人</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-600 h-full" style="width: 75%"></div>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded">尚有 1 個名額</span>
+                                <button onclick="showScreen('screen-admin-users')" class="text-blue-600 text-sm font-medium hover:underline">管理分配</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 套書卡片 2 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col opacity-90">
+                    <div class="h-48 bg-indigo-50 flex items-center justify-center relative">
+                        <span class="absolute top-3 left-3 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded font-bold uppercase tracking-widest">2024 年度套裝</span>
+                        <div class="text-indigo-200 italic font-serif text-6xl">EBIC</div>
+                    </div>
+                    <div class="p-5">
+                        <h3 class="font-bold text-lg mb-1">主日學教材：小學低年級 B 冊</h3>
+                        <p class="text-slate-400 text-sm mb-4">適用年齡：6-8 歲</p>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-end text-sm">
+                                <span class="text-slate-600">團隊版授權狀態</span>
+                                <span class="font-bold text-slate-800">4 / 4 人</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-amber-500 h-full" style="width: 100%"></div>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">授權已額滿</span>
+                                <button onclick="showScreen('screen-admin-users')" class="text-blue-600 text-sm font-medium hover:underline">調整綁定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 畫面二：教師綁定管理 (Admin Users) -->
+        <section id="screen-admin-users" class="screen-content hidden flex-1 overflow-y-auto p-8">
+            <header class="mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">教師授權管理</h2>
+                    <p class="text-slate-500">分配教會已購教材權限給予指定的教師</p>
+                </div>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                    新增教師
+                </button>
+            </header>
+
+            <!-- 篩選器 -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 mb-6 flex gap-4">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">選擇教材套書</label>
+                    <select class="w-full border-slate-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option>幼兒級 A 冊 (3/4)</option>
+                        <option selected>小學低年級 B 冊 (4/4)</option>
+                    </select>
+                </div>
+                <div class="flex-[2]">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">搜尋教師姓名或 Email</label>
+                    <input type="text" placeholder="輸入關鍵字..." class="w-full border-slate-200 rounded-lg text-sm">
+                </div>
+            </div>
+
+            <!-- 名單列表 -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500">教師姓名</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500">帳號 Email</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500">綁定狀態</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 text-right">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <!-- 已綁定教師 1 -->
+                        <tr class="hover:bg-slate-50/50">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">王</div>
+                                    <span class="text-sm font-medium">王曉明</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500">xiaoming.w@gmail.com</td>
+                            <td class="px-6 py-4"><span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-1 rounded-full uppercase">已授權使用</span></td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="openUnbindModal('王曉明')" class="text-red-500 text-sm hover:underline">解除綁定</button>
+                            </td>
+                        </tr>
+                        <!-- 已綁定教師 2 -->
+                        <tr class="hover:bg-slate-50/50">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">李</div>
+                                    <span class="text-sm font-medium">李美玲</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500">meiling.lee@outlook.com</td>
+                            <td class="px-6 py-4"><span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-2 py-1 rounded-full uppercase">已授權使用</span></td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="openUnbindModal('李美玲')" class="text-red-500 text-sm hover:underline">解除綁定</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 替換邏輯展示 -->
+            <div class="mt-8 bg-amber-50 border border-amber-200 p-6 rounded-xl flex gap-6 items-start">
+                <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-amber-800 mb-1">提示：授權人數已額滿 (4/4)</h4>
+                    <p class="text-sm text-amber-700 leading-relaxed mb-4">目前「小學低年級 B 冊」的 4 個名額已全部分配。若需指派給新教師「張大千」，您必須先點擊上方「解除綁定」以釋出名額，或是購買額外的授權人次。</p>
+                    <div class="flex gap-3">
+                        <button class="bg-amber-600 text-white px-4 py-2 rounded text-xs font-bold">前往擴增授權</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 畫面三：受邀教師書庫 (Teacher Library) -->
+        <section id="screen-teacher-library" class="screen-content hidden flex-1 overflow-y-auto p-8">
+            <header class="mb-8 flex justify-between items-end">
+                <div>
+                    <div class="inline-block bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full mb-2">教師版帳戶</div>
+                    <h2 class="text-2xl font-bold text-slate-800">王曉明，平安！</h2>
+                    <p class="text-slate-500">以下是聖光教會為您配置的教學教材</p>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- 教材 1 -->
+                <div class="bg-white rounded-lg border border-slate-200 shadow-sm group hover:shadow-md transition-shadow overflow-hidden cursor-pointer" onclick="showScreen('screen-reader')">
+                    <div class="aspect-[3/4] bg-indigo-50 flex items-center justify-center relative border-b border-slate-100">
+                        <div class="text-indigo-200 italic font-serif text-4xl">B冊</div>
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <span class="bg-white px-4 py-2 rounded-lg text-sm font-bold text-blue-600 shadow-xl">點擊閱讀</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-bold text-sm mb-1 truncate">小學低年級 B 冊</h4>
+                        <p class="text-[10px] text-slate-400">授權單位：聖光教會</p>
+                    </div>
+                </div>
+
+                <!-- 空位示意 -->
+                <div class="rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-6 text-center opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                    <p class="text-xs text-slate-400 font-medium">暫無其他授權教材</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 畫面四：安全線上閱讀器 (Reader) -->
+        <section id="screen-reader" class="screen-content hidden flex-1 flex flex-col bg-slate-900 overflow-hidden">
+            <!-- 閱讀器工具列 -->
+            <div class="h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-6 shrink-0">
+                <div class="flex items-center gap-4">
+                    <button onclick="showScreen('screen-teacher-library')" class="text-slate-400 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    </button>
+                    <h3 class="text-slate-200 text-sm font-medium">小學低年級 B 冊 - 第 1 章：起初的創造</h3>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <div class="flex bg-slate-900 rounded-md p-0.5 border border-slate-700 mr-4">
+                        <button class="px-3 py-1 text-xs text-slate-400 hover:text-white">單頁</button>
+                        <button class="px-3 py-1 text-xs bg-slate-700 text-white rounded">雙頁</button>
+                    </div>
+                    
+                    <!-- 安全警告：明確標註無下載按鈕 -->
+                    <div class="group relative">
+                        <div class="flex items-center gap-1.5 text-rose-400 bg-rose-400/10 px-3 py-1.5 rounded-full border border-rose-400/30">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                            <span class="text-[10px] font-bold">數位版權受保護</span>
+                        </div>
+                        <div class="absolute right-0 top-10 w-48 bg-slate-800 border border-slate-700 p-3 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                            <p class="text-[10px] text-slate-300 leading-normal">此教材僅供線上閱讀。已禁用下載、複製及右鍵功能以保護智慧財產權。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PDF 模擬呈現區 -->
+            <div class="flex-1 overflow-y-auto p-12 flex flex-col items-center gap-8 no-copy">
+                <!-- 水印效果 -->
+                <div class="relative max-w-2xl w-full bg-white shadow-2xl overflow-hidden aspect-[1/1.4] flex flex-col items-center p-16">
+                    <!-- 背景水印 -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none rotate-12">
+                        <div class="text-9xl font-bold uppercase">EBIC EBIC EBIC</div>
+                    </div>
+                    
+                    <h1 class="text-4xl font-serif text-slate-800 mb-8 w-full border-b pb-4">第 1 章：天地萬物</h1>
+                    <div class="space-y-6 text-lg text-slate-700 leading-loose w-full">
+                        <p>起初，上帝創造天地。地是空虛混沌，淵面黑暗；上帝的靈運行在水面上。</p>
+                        <p>上帝說：「要有光」，就有了光。上帝看光是好的，就把光暗分開了。上帝稱光為「晝」，稱暗為「夜」。有晚上，有早晨，這是頭一日。</p>
+                        <div class="bg-slate-100 h-64 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-300 italic text-slate-400">
+                            [ 插圖：創世之初 ]
+                        </div>
+                        <p>上帝說：「諸水之間要有空氣，將水分為上下。」上帝就造出空氣，將空氣以下的水、空氣以上的水分開了。事就這樣成了。</p>
+                    </div>
+                </div>
+
+                <div class="max-w-2xl w-full bg-white shadow-2xl overflow-hidden aspect-[1/1.4] flex flex-col items-center p-16">
+                    <div class="space-y-6 text-lg text-slate-700 leading-loose w-full">
+                        <p>上帝稱空氣為「天」。有晚上，有早晨，是第二日。</p>
+                        <p>上帝說：「天下的水要聚在一處，使旱地露出來。」事就這樣成了。上帝稱旱地為「地」，稱水的聚處為「海」。上帝看著是好的。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 浮動浮水印 (展示帳號) -->
+            <div class="fixed bottom-10 right-10 pointer-events-none opacity-20 text-slate-100 text-xs text-right font-mono">
+                EBIC SECURE READER<br>
+                USER: xiaoming.w@gmail.com<br>
+                IP: 114.32.XXX.XX
+            </div>
+        </section>
+
+        <!-- 解除綁定提示 Modal (模擬) -->
+        <div id="unbind-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative z-10 scale-in animate-[scaleIn_0.2s_ease-out]">
+                <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2 leading-tight">確認解除授權綁定？</h3>
+                <p id="unbind-target" class="text-slate-500 mb-8">解除後，該教師將立即失去對該教材的線上閱讀權限。釋出的名額可分配給其他教師。</p>
+                <div class="flex gap-3">
+                    <button onclick="closeModal()" class="flex-1 py-3 border border-slate-200 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors">取消</button>
+                    <button onclick="closeModal()" class="flex-1 py-3 bg-rose-600 text-white rounded-xl text-sm font-bold hover:bg-rose-700 transition-colors shadow-lg shadow-rose-200">確認解除</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function showScreen(screenId) {
+            // 隱藏所有畫面
+            document.querySelectorAll('.screen-content').forEach(s => s.classList.add('hidden'));
+            
+            // 顯示目標畫面
+            const target = document.getElementById(screenId);
+            if (target) target.classList.remove('hidden');
+
+            // 更新側邊欄樣式
+            document.querySelectorAll('.sidebar-item').forEach(btn => {
+                btn.classList.remove('sidebar-active');
+            });
+            const activeBtn = document.getElementById('btn-' + screenId);
+            if (activeBtn) activeBtn.classList.add('sidebar-active');
+        }
+
+        function openUnbindModal(teacherName) {
+            document.getElementById('unbind-target').innerText =
+                `解除「${teacherName}」後，該教師將立即失去對「小學低年級 B 冊」的線上閱讀權限。釋出的名額可立即分配給新教師。`;
+            document.getElementById('unbind-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('unbind-modal').classList.add('hidden');
+        }
+
+        // 禁止右鍵（僅在閱讀器畫面）
+        document.addEventListener('contextmenu', event => {
+            if (document.getElementById('screen-reader').classList.contains('hidden') === false) {
+                event.preventDefault();
+            }
+        });
+
+        // 禁止快速鍵複製（僅在閱讀器畫面）
+        document.addEventListener('keydown', event => {
+            if (document.getElementById('screen-reader').classList.contains('hidden') === false) {
+                if ((event.ctrlKey || event.metaKey) && (event.key === 'c' || event.key === 'p' || event.key === 's')) {
+                    event.preventDefault();
+                }
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</body>
+</html>
