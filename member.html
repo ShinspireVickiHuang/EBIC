@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>会员专区｜EBIC 教材平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; background:#f8fafc; }
+    .tag { font-size:11px; font-weight:800; padding:2px 10px; border-radius:999px; border:1px solid; }
+    .tag-blue    { color:#1d4ed8; background:#eff6ff; border-color:#bfdbfe; }
+    .tag-amber   { color:#b45309; background:#fffbeb; border-color:#fde68a; }
+    .tag-emerald { color:#047857; background:#ecfdf5; border-color:#a7f3d0; }
+    .tag-rose    { color:#be123c; background:#fff1f2; border-color:#fecdd3; }
+    .shadow-card { box-shadow: 0 10px 30px rgba(2,6,23,.06); }
+    .seg { display:inline-flex; padding:4px; border-radius:18px; border:1px solid #e2e8f0; background:#fff; }
+    .seg button { padding:8px 14px; border-radius:14px; font-weight:900; font-size:12px; cursor:pointer; }
+    .seg button.active { background:#0f172a; color:#fff; }
+    .tab { display:none; }
+    .tab.active { display:block; }
+    .pill-active { background:#0f172a; color:white; }
+    .nav-active { background:#0f172a !important; color:#fff !important; }
+    .no-copy { user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+    .btn-disabled { opacity:.65; cursor:not-allowed; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- Header -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+    <a href="index.html" class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 text-white font-black flex items-center justify-center">E</div>
+      <div>
+        <div class="text-lg font-black text-slate-900">EBIC</div>
+        <div class="text-[11px] text-slate-400 -mt-0.5" data-i18n="brandTagline">教材套装｜电子教材｜培训视频</div>
+      </div>
+    </a>
+    <div class="flex-1 hidden md:block">
+      <div class="relative">
+        <input id="searchInput" class="w-full border border-slate-200 rounded-2xl px-4 py-2.5 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+          data-i18n-placeholder="searchPlaceholder" placeholder="搜索：学前 / 小学 P1-P2 / P3-P4 / 中学、A/B 册..." />
+        <div class="absolute right-3 top-2.5 text-slate-400 text-sm">⌘K</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="relative">
+        <button onclick="toggleMemberMenu()" class="px-3 py-2 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-extrabold text-slate-800">
+          <span id="memberBtnText"><span id="memberBtnTextI18n" data-loggedin="0">登录</span></span>
+        </button>
+        <div id="memberMenu" class="hidden absolute right-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-card overflow-hidden z-50">
+          <div class="p-4 border-b border-slate-100">
+            <div class="text-xs text-slate-400" data-i18n="memberStatusLabel">会员状态</div>
+            <div id="memberStateText" class="text-sm font-black text-slate-900 mt-1">未登录</div>
+            <div id="memberSubText" class="text-xs text-slate-400 mt-1">登录后可进入会员专区（团队授权/书库/订单）</div>
+          </div>
+          <div class="p-2 space-y-1">
+            <button id="loginMenuBtn" onclick="openLogin()" class="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 text-sm" data-i18n="loginRegister">登录 / 注册（示意）</button>
+            <a href="member.html" onclick="closeMemberMenu()" class="block px-3 py-2 rounded-xl hover:bg-slate-50 text-sm" data-i18n="memberZone">会员专区</a>
+            <button id="logoutMenuBtn" onclick="logout()" class="hidden w-full text-left px-3 py-2 rounded-xl hover:bg-slate-50 text-sm text-rose-600 font-bold" data-i18n="logout">注销</button>
+          </div>
+        </div>
+      </div>
+      <button onclick="openCart()" class="px-3 py-2 rounded-2xl bg-slate-900 text-white text-sm font-black hover:bg-slate-800">
+        <span data-i18n="cartLabel">购物车</span> <span id="cartCount" class="ml-1 text-xs bg-white/15 px-2 py-0.5 rounded-full">0</span>
+      </button>
+    </div>
+  </div>
+  <div class="border-t border-slate-100 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between gap-4 flex-wrap">
+      <nav class="flex items-center gap-1 overflow-x-auto">
+        <a href="index.html"    data-nav="home"     class="px-3 py-2 rounded-xl text-sm font-bold hover:bg-slate-50" data-i18n="navHome">首页</a>
+        <a href="products.html" data-nav="products" class="px-3 py-2 rounded-xl text-sm font-bold hover:bg-slate-50" data-i18n="navProducts">商品</a>
+        <a href="series.html"   data-nav="series"   class="px-3 py-2 rounded-xl text-sm font-bold hover:bg-slate-50" data-i18n="navSeries">系列/年级</a>
+        <a href="policy.html"   data-nav="policy"   class="px-3 py-2 rounded-xl text-sm font-bold hover:bg-slate-50" data-i18n="navPolicy">购买/自取/售后政策</a>
+        <a href="member.html"   data-nav="member"   class="px-3 py-2 rounded-xl text-sm font-bold hover:bg-slate-50" data-i18n="navMember">会员专区</a>
+      </nav>
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="seg" role="group" aria-label="language">
+          <button id="lang-zh" class="active" onclick="switchLang('zh')">简体中文</button>
+          <button id="lang-en" onclick="switchLang('en')">English</button>
+        </div>
+        <div class="seg" role="group" aria-label="currency">
+          <button id="cur-SGD" class="active" onclick="switchCurrency('SGD')">SGD</button>
+          <button id="cur-USD" onclick="switchCurrency('USD')">USD</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+
+  <!-- Gate: not logged in -->
+  <div id="memberGate" class="bg-white rounded-3xl border border-slate-200 p-8 shadow-card">
+    <div class="flex items-start gap-4">
+      <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-black text-2xl">🔒</div>
+      <div class="flex-1">
+        <h2 class="text-2xl font-black text-slate-900" data-i18n="memberTitle">会员专区</h2>
+        <p class="text-slate-600 mt-2 leading-relaxed" data-i18n="memberGateDesc">
+          需登录后才可查看：<span class="font-black">团队授权管理（教会）</span>、<span class="font-black">我的书库（PDF + 影音）</span>、<span class="font-black">订单 / 自取 / 售后</span>。
+        </p>
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <button onclick="openLogin()" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700" data-i18n="btnLoginDemo">登录（示意）</button>
+          <a href="products.html" class="px-5 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50 text-center" data-i18n="btnBrowse">先去逗商品</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Member area: logged in -->
+  <div id="memberArea" class="hidden">
+    <div class="flex flex-col lg:flex-row gap-6">
+
+      <!-- Left sidebar -->
+      <aside class="lg:w-80 space-y-6">
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-card">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black" id="avatar">王</div>
+            <div class="min-w-0">
+              <div class="text-xs text-slate-400" data-i18n="loggedInLabel">已登录</div>
+              <div class="text-lg font-black text-slate-900 truncate" id="memberName">王晓明</div>
+              <div class="text-xs text-slate-500 truncate" id="memberEmail">xiaoming.w@gmail.com</div>
+            </div>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="tag tag-amber" id="roleTag">受邀教师</span>
+            <span class="tag tag-blue" id="orgTag">所属：圣光教会</span>
+          </div>
+          <!-- Device login notice -->
+          <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 leading-relaxed">
+            🔒 <span class="font-bold" data-i18n="memberDeviceTitle">单一装置登录</span>：<span data-i18n="deviceNotice">同帐号同时仅允许一台装置在线，防止公用帐号滥用。</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-card">
+          <div class="font-black text-slate-900" data-i18n="quickEntry">快速入口</div>
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <button onclick="setMemberTab('tab-library')" class="px-3 py-3 rounded-2xl bg-slate-900 text-white text-sm font-black hover:bg-slate-800" data-i18n="myLibrary">我的书库</button>
+            <button onclick="setMemberTab('tab-orders')"  class="px-3 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-black hover:bg-slate-50" data-i18n="myOrders">订单</button>
+            <button onclick="setMemberTab('tab-team')"    class="px-3 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-black hover:bg-slate-50" data-i18n="teamAuth">团队授权</button>
+            <button onclick="setMemberTab('tab-policy')"  class="px-3 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-black hover:bg-slate-50" data-i18n="termsLabel">条款</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right content -->
+      <section class="flex-1 space-y-6">
+        <!-- Tab pills -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-4 shadow-card">
+          <div class="flex flex-wrap gap-2">
+            <button id="pill-team"    onclick="setMemberTab('tab-team')"    class="px-4 py-2 rounded-2xl text-sm font-black hover:bg-slate-50" data-i18n="pillTeam">团队授权管理（教会）</button>
+            <button id="pill-library" onclick="setMemberTab('tab-library')" class="px-4 py-2 rounded-2xl text-sm font-black hover:bg-slate-50 pill-active" data-i18n="pillLibrary">我的书库（PDF + 影音）</button>
+            <button id="pill-orders"  onclick="setMemberTab('tab-orders')"  class="px-4 py-2 rounded-2xl text-sm font-black hover:bg-slate-50" data-i18n="pillOrders">订单 / 自取 / 售后</button>
+            <button id="pill-policy"  onclick="setMemberTab('tab-policy')"  class="px-4 py-2 rounded-2xl text-sm font-black hover:bg-slate-50" data-i18n="pillPolicy">政策/条款</button>
+          </div>
+        </div>
+
+        <!-- TAB: Team -->
+        <div id="tab-team" class="tab bg-white rounded-3xl border border-slate-200 p-6 shadow-card">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="flex flex-wrap gap-2 mb-2">
+                <span class="tag tag-blue">教会管理员专属</span>
+                <span class="tag tag-rose">绑定/解除/替换</span>
+              </div>
+              <h3 class="text-xl font-black text-slate-900" data-i18n="teamTabTitle">团队授权管理（教会）</h3>
+              <p class="text-slate-600 mt-2" data-i18n="teamTabDesc">列出教会购买的多套教材授权，管理员可逐套指派席位。</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="setRole('teacher')"     class="px-3 py-2 rounded-2xl border border-slate-200 bg-white text-xs font-black hover:bg-slate-50" data-i18n="switchTeacher">切成教师</button>
+              <button onclick="setRole('churchAdmin')" class="px-3 py-2 rounded-2xl bg-slate-900 text-white text-xs font-black hover:bg-slate-800" data-i18n="switchAdmin">切成管理员</button>
+            </div>
+          </div>
+
+          <div id="teamGate" class="mt-6 p-5 rounded-3xl bg-amber-50 border border-amber-200">
+            <div class="font-black text-amber-900" data-i18n="insufficientPerm">权限不足</div>
+            <div class="text-sm text-amber-800 mt-1 leading-relaxed" data-i18n="insufficientPermDesc">
+              你目前不是教会管理员，因此看不到「团队授权管理」。<br>
+              （Prototype 可用右上角切换角色观看示意）
+            </div>
+          </div>
+
+          <div id="teamPanel" class="hidden mt-6 space-y-4">
+            <div class="p-5 rounded-3xl border border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+              <div class="font-black text-slate-900" data-i18n="authOverview">授权总览（示意）</div>
+              <div class="text-sm text-slate-600 mt-1" data-i18n="authOverviewDesc">共 3 套教材授权｜可用席位依各套装方案计算</div>
+              </div>
+              <button onclick="alert('示意：添加/管理教会库名单。')" class="px-4 py-2 rounded-2xl border border-slate-200 bg-white text-sm font-black hover:bg-slate-50 shrink-0" data-i18n="manageChurch">
+                管理教会库名单
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              <!-- Card P1-P2 -->
+              <div class="rounded-3xl border border-slate-200 bg-white overflow-hidden">
+                <div class="p-5 border-b border-slate-100">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="flex flex-wrap gap-2"><span class="tag tag-blue">小学 P1-P2</span><span class="tag tag-amber">A 册</span><span class="tag tag-emerald">4 人版</span></div>
+                      <div class="mt-2 font-black text-slate-900">套装教材授权（4 席）</div>
+                      <div class="text-xs text-slate-500 mt-1">内容：PDF（无视频）｜效期：开通后 2 年</div>
+                    </div>
+                    <button onclick="openBindModal('(P10-P2）')" class="px-4 py-2 rounded-2xl bg-blue-600 text-white text-sm font-black hover:bg-blue-700 shrink-0" data-i18n="assignSeat">指派席位</button>
+                  </div>
+                  <div class="mt-4">
+                    <div class="flex justify-between text-xs text-slate-500"><span>使用</span><span class="font-black text-blue-600">2 / 4</span></div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-2"><div class="bg-blue-600 h-full" style="width:50%"></div></div>
+                  </div>
+                </div>
+                <div class="p-5 space-y-2">
+                  <div class="text-sm font-black text-slate-900 mb-3" data-i18n="boundLabel">已绑定（2）</div>
+                  <div class="p-3 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+                    <div><div class="font-black text-slate-900">王晓明</div><div class="text-xs text-slate-500">PDF</div></div>
+                    <button onclick="openUnbindModal('王晓明')" class="text-rose-600 text-sm font-black hover:underline" data-i18n="revoke">解除</button>
+                  </div>
+                  <div class="p-3 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+                    <div><div class="font-black text-slate-900">林佳慧</div><div class="text-xs text-slate-500">PDF</div></div>
+                    <button onclick="openUnbindModal('林佳慧')" class="text-rose-600 text-sm font-black hover:underline" data-i18n="revoke">解除</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card P3-P4 -->
+              <div class="rounded-3xl border border-slate-200 bg-white overflow-hidden">
+                <div class="p-5 border-b border-slate-100">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="flex flex-wrap gap-2"><span class="tag tag-blue">小学 P3-P4</span><span class="tag tag-amber">B 册</span><span class="tag tag-emerald">5 人份</span><span class="tag tag-rose">含视频</span></div>
+                      <div class="mt-2 font-black text-slate-900">套装教材授权（5 席）</div>
+                      <div class="text-xs text-slate-500 mt-1">内容：PDF + 培训视频｜效期：开通后 2 年</div>
+                    </div>
+                    <button onclick="openBindModal('(P30-P4）')" class="px-4 py-2 rounded-2xl bg-blue-600 text-white text-sm font-black hover:bg-blue-700 shrink-0" data-i18n="assignSeat">指派席位</button>
+                  </div>
+                  <div class="mt-4">
+                    <div class="flex justify-between text-xs text-slate-500"><span>使用</span><span class="font-black text-blue-600">3 / 5</span></div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-2"><div class="bg-blue-600 h-full" style="width:60%"></div></div>
+                  </div>
+                </div>
+                <div class="p-5 space-y-2">
+                  <div class="text-sm font-black text-slate-900 mb-3">已绑定（3）</div>
+                  <div class="p-3 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+                    <div><div class="font-black text-slate-900">李美玲</div><div class="text-xs text-slate-500">PDF + 视频</div></div>
+                    <button onclick="openUnbindModal('李美玲')" class="text-rose-600 text-sm font-black hover:underline" data-i18n="revoke">解除</button>
+                  </div>
+                  <div class="p-3 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+                    <div><div class="font-black text-slate-900">陈建宏</div><div class="text-xs text-slate-500">PDF + 视频</div></div>
+                    <button onclick="openUnbindModal('陈建宏')" class="text-rose-600 text-sm font-black hover:underline" data-i18n="revoke">解除</button>
+                  </div>
+                  <div class="p-3 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+                    <div><div class="font-black text-slate-900">张大千</div><div class="text-xs text-slate-500">PDF + 视频</div></div>
+                    <button onclick="openUnbindModal('张大千')" class="text-rose-600 text-sm font-black hover:underline" data-i18n="revoke">解除</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card Preschool -->
+              <div class="rounded-3xl border border-slate-200 bg-white overflow-hidden">
+                <div class="p-5 border-b border-slate-100">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="flex flex-wrap gap-2"><span class="tag tag-blue">学前</span><span class="tag tag-amber">A 册</span><span class="tag tag-emerald">8 人版</span></div>
+                      <div class="mt-2 font-black text-slate-900">套装教材授权（8 席）</div>
+                      <div class="text-xs text-slate-500 mt-1">内容：PDF（示意）｜效期：开通后 2 年</div>
+                    </div>
+                    <button onclick="openBindModal('(学前）')" class="px-4 py-2 rounded-2xl bg-blue-600 text-white text-sm font-black hover:bg-blue-700 shrink-0" data-i18n="assignSeat">指派席位</button>
+                  </div>
+                  <div class="mt-4">
+                    <div class="flex justify-between text-xs text-slate-500"><span>使用</span><span class="font-black text-blue-600">0 / 8</span></div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-2"><div class="bg-blue-600 h-full" style="width:0%"></div></div>
+                  </div>
+                </div>
+                <div class="p-5">
+                  <div class="text-sm font-black text-slate-900 mb-3">已绑定（0）</div>
+                  <div class="text-sm text-slate-500">尚未指派任何教师（示意）</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-3xl bg-amber-50 border border-amber-200">
+              <div class="font-black text-amber-900">规则提示</div>
+              <div class="text-sm text-amber-800 mt-1 leading-relaxed">
+                名额额满时，需先解除绑定发布名额才能替换。<br>
+                5 人份套装：被绑定教师同时取得培训视频观看权限（示意）。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Library -->
+        <div id="tab-library" class="tab active bg-white rounded-3xl border border-slate-200 p-6 shadow-card">
+          <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+            <div>
+              <div class="flex flex-wrap gap-2 mb-2">
+                <span class="tag tag-blue">会员书库</span>
+                <span class="tag tag-emerald">效期2年</span>
+                <span class="tag tag-rose">到期锁定</span>
+              </div>
+              <h3 class="text-xl font-black text-slate-900" data-i18n="libTabTitle">我的书库（PDF + 影音）</h3>
+              <p class="text-slate-600 mt-2" data-i18n="libTabDesc">清单式呈现：先好找、好读，再进入阅读/播放。</p>
+            </div>
+            <div class="flex items-center justify-between lg:justify-end gap-3">
+              <div class="seg" role="tablist" aria-label="library type">
+                <button id="segPdf"   class="active" onclick="setLibraryView('pdf')" data-i18n="segPdf">PDF 教材</button>
+                <button id="segVideo" onclick="setLibraryView('video')" data-i18n="segVideo">培训视频</button>
+              </div>
+              <div class="hidden sm:flex items-center gap-2 text-xs text-slate-500 mono">
+                USER: <span id="watermarkUser">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-3">
+            <div class="lg:col-span-6">
+              <input id="libSearch" oninput="renderLibrary()" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+                data-i18n-placeholder="libSearchPlaceholder" placeholder="搜索：年级/册别/关键字（示意）" />
+            </div>
+            <div class="lg:col-span-3">
+              <select id="libGrade" onchange="renderLibrary()" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm bg-white">
+                <option value="" data-i18n="allGrades">全部年级</option>
+                <option value="学前">学前</option>
+                <option value="P1-P2">小学 P1-P2</option>
+                <option value="P3-P4">小学 P3-P4</option>
+                <option value="中学">中学</option>
+              </select>
+            </div>
+            <div class="lg:col-span-3">
+              <select id="libStatus" onchange="renderLibrary()" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm bg-white">
+                <option value="" data-i18n="allStatus">全部状态</option>
+                <option value="active" data-i18n="statusActive">可使用</option>
+                <option value="expired" data-i18n="statusExpired">已到期</option>
+                <option value="restricted" data-i18n="statusRestricted">条件限制</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-5 border border-slate-200 rounded-3xl overflow-hidden bg-white">
+            <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div class="text-sm font-black text-slate-900" id="libTitle">PDF 教材清单</div>
+              <div class="text-xs text-slate-500" data-i18n="libHint">点「阅读/播放」进入内容（示意）</div>
+            </div>
+            <div class="hidden md:grid grid-cols-12 gap-3 px-5 py-3 text-xs font-black text-slate-500 border-b border-slate-100">
+              <div class="col-span-5" data-i18n="libColContent">内容</div>
+              <div class="col-span-2" data-i18n="libColGrade">年级</div>
+              <div class="col-span-2" data-i18n="libColExpiry">效期/状态</div>
+              <div class="col-span-3 text-right" data-i18n="libColAction">操作</div>
+            </div>
+            <div id="libList" class="divide-y divide-slate-100"></div>
+            <div id="libEmpty" class="hidden p-8 text-center text-sm text-slate-500" data-i18n="libEmptyMsg">找不到符合条件的内容（示意）</div>
+          </div>
+
+          <div class="mt-6 p-5 rounded-3xl bg-rose-50 border border-rose-200">
+            <div class="font-black text-rose-900" data-i18n="libSecurityNote">安全提示（Prototype）</div>
+            <div class="text-sm text-rose-800 mt-1 leading-relaxed" data-i18n="libSecurityDesc">
+              此处仅示意「禁下载/禁拷贝」与播放接口。正式版需：鉴权、反盗连、DRM/加密、浮水印、稽核等策略。
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Orders -->
+        <div id="tab-orders" class="tab bg-white rounded-3xl border border-slate-200 p-6 shadow-card">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="flex flex-wrap gap-2 mb-2">
+                <span class="tag tag-blue">订单</span>
+                <span class="tag tag-amber">物流追踪</span>
+                <span class="tag tag-rose">14天瑕疵换货</span>
+              </div>
+              <h3 class="text-xl font-black text-slate-900" data-i18n="ordersTitle">订单 / 物流 / 售后</h3>
+              <p class="text-slate-600 mt-2" data-i18n="ordersDesc">付款状态、出货单号与物流查询、售后申请（瑞疵换货）。</p>
+            </div>
+            <button onclick="alert('示意：创建瑕疵换货申请（需照片/订单信息/期限）。')"
+              class="px-4 py-2 rounded-2xl bg-rose-600 text-white text-sm font-black hover:bg-rose-700 shrink-0" data-i18n="btnRequestExchange">
+              申请瑕疵换货
+            </button>
+          </div>
+
+          <div class="mt-6 border border-slate-200 rounded-3xl overflow-hidden bg-white">
+            <div class="p-5 border-b border-slate-100">
+              <div class="font-black text-slate-900" data-i18n="myOrdersTitle">我的订单</div>
+              <div class="text-xs text-slate-400 mt-1" data-i18n="ordersStatusHint">状态：待汇款 / 待确认 / 已付款 / 已开通 / 运送中 / 已取货 / 换货中</div>
+            </div>
+
+            <div class="divide-y divide-slate-100">
+              <!-- Order 1: pending payment, no logistics yet -->
+              <div class="p-5 flex flex-col gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap gap-2 items-center">
+                      <div class="font-black text-slate-900">#SO-2026-00021</div>
+                      <span class="tag tag-amber">线下汇款待确认</span>
+                    </div>
+                    <div class="text-sm text-slate-600 mt-1">商品：小学 P3-P4 套装（5人份）</div>
+                    <div class="text-xs text-slate-500 mt-1">下单日：2026-04-18</div>
+                  </div>
+                  <button onclick="alert('示意：显示汇款信息/上传凭证/填写末五码。')"
+                    class="px-4 py-2 rounded-2xl bg-slate-900 text-white text-sm font-black hover:bg-slate-800 shrink-0" data-i18n="btnViewPayment">
+                    查看付款指示
+                  </button>
+                </div>
+                <!-- Logistics: not shipped yet -->
+                <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+                  <span class="tag tag-amber" data-i18n="logisticsNotShipped">备货中</span>
+                  <span class="text-xs text-slate-500" data-i18n="logisticsNotShippedNote">出货单号：— （付款确认后出货）</span>
+                </div>
+              </div>
+
+              <!-- Order 2: paid, shipped with tracking -->
+              <div class="p-5 flex flex-col gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap gap-2 items-center">
+                      <div class="font-black text-slate-900">#SO-2026-00018</div>
+                      <span class="tag tag-emerald">已付款 / 已开通</span>
+                      <span class="tag tag-blue">运送中</span>
+                    </div>
+                    <div class="text-sm text-slate-600 mt-1">商品：小学 P1-P2 套装（4人版）</div>
+                    <div class="text-xs text-slate-500 mt-1">付款日：2026-04-10</div>
+                  </div>
+                  <button onclick="alert('示意：预约自取时段/地点（或查看配送地址）。')"
+                    class="px-4 py-2 rounded-2xl bg-blue-600 text-white text-sm font-black hover:bg-blue-700 shrink-0" data-i18n="btnViewDelivery">
+                    查看配送
+                  </button>
+                </div>
+                <!-- Logistics: shipped with tracking link -->
+                <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row sm:items-center gap-3">
+                  <div class="flex items-center gap-3 flex-1 min-w-0">
+                    <span class="tag tag-emerald shrink-0" data-i18n="logisticsShipped">已出货</span>
+                    <div class="min-w-0">
+                      <div class="text-xs font-black text-slate-800">出货单号：SG-TK-2026-00184</div>
+                      <div class="text-xs text-slate-500 mt-0.5" data-i18n="logisticsCarrier">承运：SingPost｜预计 2026-04-23 送达</div>
+                    </div>
+                  </div>
+                  <a href="https://www.singpost.com/track-items" target="_blank" rel="noopener noreferrer"
+                    class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-black hover:bg-emerald-700 shrink-0 text-center" data-i18n="trackingLink">
+                    前往物流查询 →
+                  </a>
+                </div>
+              </div>
+
+              <!-- Order 3: delivered, after-sales exchange -->
+              <div class="p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="min-w-0">
+                  <div class="flex flex-wrap gap-2 items-center">
+                    <div class="font-black text-slate-900">#SO-2026-00012</div>
+                    <span class="tag tag-emerald">已付款</span>
+                    <span class="tag tag-rose">换货中</span>
+                  </div>
+                  <div class="text-sm text-slate-600 mt-1">原因：印刷瑕疵（示意）</div>
+                  <div class="text-xs text-slate-500 mt-1">申请日：2026-03-28｜状态：审核中</div>
+                </div>
+                <button onclick="alert('示意：查看售后进度、补充数据。')"
+                  class="px-4 py-2 rounded-2xl border border-slate-200 bg-white text-sm font-black hover:bg-slate-50 shrink-0" data-i18n="btnViewProgress">
+                  查看进度
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Policy -->
+        <div id="tab-policy" class="tab bg-white rounded-3xl border border-slate-200 p-6 shadow-card">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-black text-slate-900" data-i18n="policyTabTitle">政策 / 条款（会员区）</h3>
+              <p class="text-slate-600 mt-2" data-i18n="policyTabDesc">关键条款同步展示，结帐/订单页亦会重复揭露。</p>
+            </div>
+            <a href="policy.html" class="px-4 py-2 rounded-2xl border border-slate-200 bg-white text-sm font-black hover:bg-slate-50 shrink-0" data-i18n="viewFullPolicy">
+              查看完整政策页
+            </a>
+          </div>
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="p-5 rounded-3xl bg-amber-50 border border-amber-200">
+              <div class="font-black text-amber-900" data-i18n="memberPayPolicy">金流</div>
+              <div class="text-sm text-amber-800 mt-2" data-i18n="memberPayPolicyDesc">线下汇款 / 人工核款（示意）<br>多币别：SGD 标准价；可换算 USD</div>
+            </div>
+            <div class="p-5 rounded-3xl bg-blue-50 border border-blue-200">
+              <div class="font-black text-blue-900" data-i18n="memberDelivPolicy">物流 / 自取</div>
+              <div class="text-sm text-blue-800 mt-2" data-i18n="memberDelivPolicyDesc">出货后可于订单页查询单号并前往物流追踪</div>
+            </div>
+            <div class="p-5 rounded-3xl bg-rose-50 border border-rose-200">
+              <div class="font-black text-rose-900" data-i18n="memberAfterPolicy">售后</div>
+              <div class="text-sm text-rose-800 mt-2" data-i18n="memberAfterPolicyDesc">不退货；14 天内瑞疵换货</div>
+            </div>
+          </div>
+          <div class="mt-4 p-5 rounded-3xl bg-white border border-slate-200">
+            <div class="font-black text-slate-900" data-i18n="memberDigitalTitle">数字内容效期</div>
+            <div class="text-sm text-slate-600 mt-2 leading-relaxed" data-i18n="memberDigitalDesc">
+              电子版教材开通后有效 2 年；到期自动上锁。可由后台人工展延（含纪录）。
+            </div>
+          </div>
+          <div class="mt-4 p-5 rounded-3xl bg-amber-50 border border-amber-200">
+            <div class="font-black text-amber-900" data-i18n="memberDeviceTitle">🔒 单一装置登录</div>
+            <div class="text-sm text-amber-800 mt-2 leading-relaxed" data-i18n="memberDeviceDesc">
+              同一会员账号同时仅允许一台装置在线，防止多位教师共用同一账号。
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-slate-200 bg-white mt-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div>
+      <div class="font-black text-slate-900">EBIC</div>
+      <div class="text-sm text-slate-500 mt-2 leading-relaxed">Prototype：前台电商 + 会员专区。</div>
+    </div>
+    <div>
+      <div class="font-black text-slate-900">政策</div>
+      <ul class="mt-2 text-sm text-slate-600 space-y-2">
+        <li><a href="policy.html" class="hover:underline">购买/自取/售后政策</a></li>
+        <li><a href="policy.html" class="hover:underline">不退货与14天瑕疵换货</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="font-black text-slate-900">系统状态（示意）</div>
+      <div class="mt-2 text-sm text-slate-600">
+        <div>登录：<span id="footerLogin" class="font-black">否</span></div>
+        <div>角色：<span id="footerRole" class="font-black">—</span></div>
+      </div>
+      <div class="mt-3 text-xs text-slate-400 mono">BUILD: PROTOTYPE-2026-04-21</div>
+    </div>
+  </div>
+  <div class="border-t border-slate-100 py-4 text-center text-xs text-slate-400">© EBIC Prototype</div>
+</footer>
+
+<!-- Device login banner -->
+<div id="deviceLoginBanner" class="hidden fixed bottom-4 left-4 right-4 z-[200] max-w-xl mx-auto bg-amber-50 border border-amber-300 rounded-2xl shadow-card p-4 flex items-start gap-3">
+  <div class="text-amber-500 text-xl">🔒</div>
+  <div class="flex-1">
+    <div class="font-black text-amber-900 text-sm" data-i18n="deviceBannerTitle">装置登录限制</div>
+    <div id="deviceBannerText" class="text-xs text-amber-800 mt-1">同一账号同时仅允许一台设备登录。</div>
+  </div>
+  <button onclick="document.getElementById('deviceLoginBanner').classList.add('hidden')" class="text-amber-400 hover:text-amber-700 font-black">✕</button>
+</div>
+
+<!-- Login modal -->
+<div id="loginModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeLogin()"></div>
+  <div class="bg-white rounded-3xl shadow-card w-full max-w-md p-7 relative z-10 border border-slate-200">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <div class="text-xs text-slate-400" data-i18n="loginSubtitle">登录（示意）</div>
+        <div class="text-xl font-black text-slate-900 mt-1" data-i18n="loginTitle">会员登录</div>
+      </div>
+      <button onclick="closeLogin()" class="text-slate-400 hover:text-slate-900">✕</button>
+    </div>
+    <div class="mt-5 space-y-3">
+      <div>
+        <label class="text-xs text-slate-500 font-bold">Email</label>
+        <input id="loginEmail" class="mt-1 w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" value="xiaoming.w@gmail.com" />
+      </div>
+      <div>
+        <label class="text-xs text-slate-500 font-bold" data-i18n="labelName">姓名</label>
+        <input id="loginName" class="mt-1 w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" value="王晓明" />
+      </div>
+      <div>
+        <label class="text-xs text-slate-500 font-bold" data-i18n="labelRole">角色（Prototype）</label>
+        <select id="loginRole" class="mt-1 w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200">
+          <option value="teacher" data-i18n="roleTeacher">受邀教师</option>
+          <option value="churchAdmin" data-i18n="roleAdmin">教会管理员</option>
+        </select>
+      </div>
+    </div>
+    <div class="mt-6 flex gap-3">
+      <button onclick="closeLogin()" class="flex-1 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50" data-i18n="btnCancel">取消</button>
+      <button onclick="login()" class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700" data-i18n="btnLogin">登录</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cart modal -->
+<div id="cartModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeCart()"></div>
+  <div class="bg-white rounded-3xl shadow-card w-full max-w-lg p-7 relative z-10 border border-slate-200">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <div class="text-xs text-slate-400">购物车（示意）</div>
+        <div class="text-xl font-black text-slate-900 mt-1" data-i18n="cartModalTitle">你的购物车</div>
+      </div>
+      <button onclick="closeCart()" class="text-slate-400 hover:text-slate-900">✕</button>
+    </div>
+    <div id="cartModalEmpty" class="mt-5 text-sm text-slate-400 border border-dashed border-slate-200 rounded-2xl p-4" data-i18n="cartModalEmpty">尚未加入任何商品</div>
+    <div id="cartModalList" class="mt-5 hidden space-y-3"></div>
+    <div class="mt-6 pt-5 border-t border-slate-100 space-y-3">
+      <div class="text-xs text-slate-500 leading-relaxed">
+        结帐政策：<span class="font-black">线下汇款</span>、<span class="font-black">预约自取</span>、<span class="font-black">不退货（14天瑕疵换货）</span>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="clearCart()" class="flex-1 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50" data-i18n="btnCartClear">清空</button>
+        <button onclick="checkout()" class="flex-1 py-3 rounded-2xl bg-emerald-600 text-white font-black hover:bg-emerald-700" data-i18n="btnCartCheckout">前往结帐</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bind/Unbind modals -->
+<div id="unbindModal" class="hidden fixed inset-0 z-[130] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('unbindModal')"></div>
+  <div class="bg-white rounded-3xl shadow-card w-full max-w-md p-7 relative z-10 border border-slate-200">
+    <div class="text-xs text-slate-400" data-i18n="unbindSubtitle">解除绑定（示意）</div>
+    <div class="text-xl font-black text-slate-900 mt-1" data-i18n="unbindTitle">确认解除绑定？</div>
+    <div id="unbindText" class="text-sm text-slate-600 mt-3 leading-relaxed"></div>
+    <div class="mt-6 flex gap-3">
+      <button onclick="closeModal('unbindModal')" class="flex-1 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50" data-i18n="btnCancel">取消</button>
+      <button onclick="closeModal('unbindModal')" class="flex-1 py-3 rounded-2xl bg-rose-600 text-white font-black hover:bg-rose-700" data-i18n="btnConfirmRevoke">确认解除</button>
+    </div>
+  </div>
+</div>
+
+<div id="bindModal" class="hidden fixed inset-0 z-[130] flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('bindModal')"></div>
+  <div class="bg-white rounded-3xl shadow-card w-full max-w-md p-7 relative z-10 border border-slate-200">
+    <div class="text-xs text-slate-400" data-i18n="bindSubtitle">指派席位（示意）</div>
+    <div class="text-xl font-black text-slate-900 mt-1" data-i18n="bindTitle">指派教师授权</div>
+    <div id="bindText" class="text-sm text-slate-600 mt-3 leading-relaxed"></div>
+    <div class="mt-6 flex gap-3">
+      <button onclick="closeModal('bindModal')" class="flex-1 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50" data-i18n="btnCancel">取消</button>
+      <button onclick="closeModal('bindModal')" class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700" data-i18n="btnConfirmAssign">确认指派</button>
+    </div>
+  </div>
+</div>
+
+<!-- PDF Reader modal -->
+<div id="readerModal" class="hidden fixed inset-0 z-[120]">
+  <div class="absolute inset-0 bg-slate-950"></div>
+  <div class="relative z-10 h-full flex flex-col">
+    <div class="h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
+      <div class="flex items-center gap-3">
+        <button onclick="closeReader()" class="text-slate-300 hover:text-white font-black" data-i18n="readerBack">← 返回</button>
+        <div class="text-slate-100 text-sm font-black" data-i18n="readerTitle">安全阅读器（PDF｜示意）</div>
+      </div>
+      <div class="text-xs text-slate-400 mono">WATERMARK: <span id="readerWatermark">—</span></div>
+    </div>
+    <div class="flex-1 overflow-y-auto p-10 no-copy">
+      <div class="max-w-2xl mx-auto bg-white rounded-3xl p-10 shadow-card relative overflow-hidden">
+        <div class="absolute inset-0 flex items-center justify-center opacity-[0.04] pointer-events-none select-none rotate-12">
+          <div class="text-7xl font-black">EBIC SECURE</div>
+        </div>
+        <div class="text-xs text-slate-400">内容页（示意）</div>
+        <h2 id="readerTitle" class="text-2xl font-black text-slate-900 mt-2">—</h2>
+        <p class="text-slate-600 mt-3 leading-relaxed" data-i18n="readerDemoText">此处示意 PDF 在线阅读，不提供下载/拷贝（仅 UX 示意）。</p>
+        <div class="mt-6 bg-slate-100 border border-dashed border-slate-300 rounded-3xl h-72 flex items-center justify-center text-slate-400 italic" data-i18n="readerPlaceholder">
+          [ PDF 页面示意 ]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Video modal -->
+<div id="videoModal" class="hidden fixed inset-0 z-[120]">
+  <div class="absolute inset-0 bg-slate-950"></div>
+  <div class="relative z-10 h-full flex flex-col">
+    <div class="h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 shrink-0">
+      <div class="flex items-center gap-3">
+        <button onclick="closeVideo()" class="text-slate-300 hover:text-white font-black" data-i18n="readerBack">← 返回</button>
+        <div class="text-slate-100 text-sm font-black" data-i18n="videoTitle">视频播放器（示意）</div>
+      </div>
+      <div class="text-xs text-slate-400 mono">AUTH: seat-linked（示意）</div>
+    </div>
+    <div class="flex-1 overflow-y-auto p-10">
+      <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2">
+          <div class="bg-black border border-slate-800 rounded-3xl overflow-hidden shadow-card">
+            <div class="aspect-video flex items-center justify-center text-slate-300">
+              <div class="text-center px-6">
+                <div class="text-lg font-black" id="videoTitle">—</div>
+                <div class="text-sm text-slate-400 mt-2" data-i18n="videoPlayNote">正式版可接 HLS/DASH、DRM、浮水印、续播、倍速等</div>
+              </div>
+            </div>
+            <div class="p-4 border-t border-slate-800 text-xs text-slate-400" data-i18n="videoControlNote">
+              播放控制（示意）：播放/暂停、音量、倍速、全屏幕（禁止下载/外连）
+            </div>
+          </div>
+        </div>
+        <div class="space-y-6">
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5">
+            <div class="text-slate-100 font-black" data-i18n="videoListTitle">视频清单（示意）</div>
+            <div class="text-xs text-slate-400 mt-1" data-i18n="videoListDesc">依系列/年级分类，登录后依权限显示</div>
+            <div class="mt-4 space-y-3">
+              <button class="w-full text-left p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:bg-slate-900"
+                onclick="setVideoTitle('P3-P4 教师培训：课程导读（Part 1）')">
+                <div class="text-slate-100 text-sm font-black">Part 1：导读</div>
+                <div class="text-xs text-slate-400">时长 12:34（示意）</div>
+              </button>
+              <button class="w-full text-left p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:bg-slate-900"
+                onclick="setVideoTitle('P3-P4 教师培训：带领技巧（Part 2）')">
+                <div class="text-slate-100 text-sm font-black">Part 2：带领技巧</div>
+                <div class="text-xs text-slate-400">时长 18:20（示意）</div>
+              </button>
+            </div>
+          </div>
+          <div class="bg-rose-950/40 border border-rose-900 rounded-3xl p-5">
+            <div class="text-rose-200 font-black" data-i18n="videoSecNote">安全播放（Prototype）</div>
+            <div class="text-sm text-rose-100/90 mt-2 leading-relaxed" data-i18n="videoSecDesc">
+              此页仅示意播放接口；正式版需鉴权、反盗连、DRM/加密、浮水印、稽核。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+  // member.html: login() in shared.js redirects here, so override to stay on page
+  const _origLogin = login;
+  function login() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const name  = document.getElementById('loginName').value.trim();
+    const role  = document.getElementById('loginRole').value;
+    state.isLoggedIn = true;
+    state.email = email || state.email;
+    state.name  = name  || state.name;
+    state.role  = role;
+    saveState();
+    closeLogin();
+    renderHeaderMember();
+    renderMemberGate();
+    const banner     = document.getElementById('deviceLoginBanner');
+    const bannerText = document.getElementById('deviceBannerText');
+    if (banner && bannerText) {
+      bannerText.innerText = t('deviceAlert');
+      banner.classList.remove('hidden');
+      setTimeout(() => banner.classList.add('hidden'), 8000);
+    }
+    const btnI18n = document.getElementById('memberBtnTextI18n');
+    if (btnI18n) { btnI18n.dataset.loggedin = '1'; btnI18n.innerText = t('member'); }
+    // Stay on member.html (no redirect)
+  }
+  pageInit('member');
+</script>
+</body>
+</html>

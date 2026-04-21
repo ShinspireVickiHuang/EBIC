@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>首页｜EBIC 教材平台</title>
+  <title>商品｜EBIC 教材平台</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
@@ -18,6 +18,7 @@
     .seg button { padding:8px 14px; border-radius:14px; font-weight:900; font-size:12px; cursor:pointer; }
     .seg button.active { background:#0f172a; color:#fff; }
     .nav-active { background:#0f172a !important; color:#fff !important; }
+    .btn-disabled { opacity:.65; cursor:not-allowed; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
   </style>
 </head>
@@ -88,71 +89,124 @@
 
 <!-- Main -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+  <div class="flex items-end justify-between gap-4 mb-6">
     <div>
-      <div class="flex flex-wrap gap-2 mb-4">
-        <span class="tag tag-blue" data-i18n="tagBundle">套书固定组合</span>
-        <span class="tag tag-emerald" data-i18n="tagDigital">电子教材（2年效期）</span>
-        <span class="tag tag-rose" data-i18n="tagVideo">5人份附赠培训视频</span>
-      </div>
-      <h1 class="text-4xl font-black text-slate-900 leading-tight">
-        <span data-i18n="heroTitle">主日学教材数字化平台</span><br>
-        <span class="text-blue-600" data-i18n="heroSubtitle">电商选购 + 会员专区</span>
-      </h1>
-      <p class="text-slate-600 mt-4 leading-relaxed">
-        <span data-i18n="heroDesc">前台以电商 UI/UX 完成选购（Prototype 示意线下交易）。购买后，教会管理员可在会员专区指派教师席位；教师登录后可于「我的书库」观看 PDF 与（若方案包含）培训视频。电子内容具 2 年效期，到期自动锁定（可后台展延）。</span>
-      </p>
-      <div class="mt-6 flex flex-col sm:flex-row gap-3">
-        <a href="products.html" class="px-5 py-3 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700 text-center" data-i18n="btnShop">开始选购</a>
-        <button onclick="gotoMemberOrLogin()" class="px-5 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50" data-i18n="btnEnterMember">进入会员专区</button>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-card">
-      <div class="text-xs text-slate-400" data-i18n="flowTitle">流程（示意）</div>
-      <div class="mt-4 space-y-3">
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-          <div class="font-black text-slate-900" data-i18n="flow1">1) 选购套装</div>
-          <div class="text-sm text-slate-600 mt-1" data-i18n="flow1sub">固定套书组合；加购需检核资格</div>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-          <div class="font-black text-slate-900" data-i18n="flow2">2) 线下汇款 → 后台核款</div>
-          <div class="text-sm text-slate-600 mt-1" data-i18n="flow2sub">核款后开通数字权限与席位</div>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-          <div class="font-black text-slate-900" data-i18n="flow3">3) 教会指派教师</div>
-          <div class="text-sm text-slate-600 mt-1" data-i18n="flow3sub">席位可解除/替换；5人份附赠视频</div>
-        </div>
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-          <div class="font-black text-slate-900" data-i18n="flow4">4) 教师登录书库</div>
-          <div class="text-sm text-slate-600 mt-1" data-i18n="flow4sub">PDF 在线阅读｜视频在线播放｜2年效期</div>
-        </div>
-      </div>
+      <h2 class="text-2xl font-black text-slate-900" data-i18n="productsTitle">商品</h2>
+      <p class="text-slate-500 mt-1" data-i18n="productsDesc">加购商品不符合条件时按鈕改为「需先买套装」并提示。</p>
     </div>
   </div>
 
-  <!-- Feature highlights -->
-  <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
-      <div class="text-2xl mb-3">🌐</div>
-      <div class="font-black text-slate-900" data-i18n="feat1Title">多国语系</div>
-      <div class="text-sm text-slate-600 mt-1" data-i18n="feat1Desc">支援简体中文 / English；预设简体中文（适合新加坡年长用户）</div>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Product cards -->
+    <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+      <!-- bundle P1-P2 -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
+        <div class="flex flex-wrap gap-2">
+          <span class="tag tag-blue">套书</span>
+          <span class="tag tag-emerald">实体+电子</span>
+          <span class="tag tag-amber">A 册</span>
+        </div>
+        <div class="mt-3 text-lg font-black text-slate-900" data-i18n="p1p2Name">小学 P1-P2 套装教材（4人版）</div>
+        <div class="text-sm text-slate-600 mt-2" data-i18n="p1p2Desc">固定套书组合。含电子教材权限（依席位派发）。</div>
+        <div class="mt-4 flex items-center justify-between">
+          <div class="text-slate-900 font-black text-lg"><span id="price-bundle-p1p2-4">S$ 98.00</span></div>
+          <button onclick="addToCart('bundle-p1p2-4','小学 P1-P2 套装（4人版）','bundle',{includesVideo:false,grade:'P1-P2'})"
+            class="px-4 py-2 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700" data-i18n="btnAddToCart">
+            加入购物车
+          </button>
+        </div>
+      </div>
+
+      <!-- bundle P3-P4 -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
+        <div class="flex flex-wrap gap-2">
+          <span class="tag tag-blue">套书</span>
+          <span class="tag tag-emerald">实体+电子</span>
+          <span class="tag tag-amber">B 册</span>
+          <span class="tag tag-rose">5人份附赠视频</span>
+        </div>
+        <div class="mt-3 text-lg font-black text-slate-900" data-i18n="p3p4Name">小学 P3-P4 套装教材（5人份）</div>
+        <div class="text-sm text-slate-600 mt-2" data-i18n="p3p4Desc">5 人份套装：席位绑定教师可看 PDF + 视频（示意）。</div>
+        <div class="mt-4 flex items-center justify-between">
+          <div class="text-slate-900 font-black text-lg"><span id="price-bundle-p3p4-5">S$ 138.00</span></div>
+          <button onclick="addToCart('bundle-p3p4-5','小学 P3-P4 套装（5人份）','bundle',{includesVideo:true,grade:'P3-P4'})"
+            class="px-4 py-2 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700" data-i18n="btnAddToCart">
+            加入购物车
+          </button>
+        </div>
+      </div>
+
+      <!-- addon P3-P4 -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
+        <div class="flex flex-wrap gap-2">
+          <span class="tag tag-amber">加购</span>
+          <span class="tag tag-blue">电子教学手册</span>
+          <span class="tag tag-rose">需先购买套装</span>
+        </div>
+        <div class="mt-3 text-lg font-black text-slate-900" data-i18n="addonName">电子版教学手册（小学 P3-P4）</div>
+        <div class="text-sm text-slate-600 mt-2" data-i18n="addonDesc">
+          加购条件：已购买/已加入对应年级套装（Prototype 先以「购物车」检核示意）。
+        </div>
+        <div class="mt-4 flex items-center justify-between">
+          <div class="text-slate-900 font-black text-lg"><span id="price-addon-manual-p3p4">S$ 28.00</span></div>
+          <button id="btn-addon-p3p4"
+            onclick="handleAddonClick('P3-P4','addon-manual-p3p4','电子版教学手册（P3-P4）')"
+            class="px-4 py-2 rounded-2xl bg-slate-900 text-white font-black hover:bg-slate-800">
+            加入购物车
+          </button>
+        </div>
+        <div id="addonHintP3P4" class="mt-4 hidden p-4 bg-amber-50 border border-amber-200 rounded-2xl text-sm text-amber-800" data-i18n="addonHint">
+          需先有 <span class="font-black">P3-P4 套装教材</span> 才能加购此商品（示意：可从购物车或历史订单检核）。
+        </div>
+      </div>
+
+      <!-- digital -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
+        <div class="flex flex-wrap gap-2">
+          <span class="tag tag-amber">纯数字</span>
+          <span class="tag tag-blue">中学系列</span>
+        </div>
+        <div class="mt-3 text-lg font-black text-slate-900" data-i18n="digitalName">中学系列（全面数字化｜示意）</div>
+        <div class="text-sm text-slate-600 mt-2" data-i18n="digitalDesc">示意纯电子商品类型（可含 PDF/视频）。</div>
+        <div class="mt-4 flex items-center justify-between">
+          <div class="text-slate-900 font-black text-lg"><span id="price-digital-junior">S$ 68.00</span></div>
+          <button onclick="addToCart('digital-junior','中学系列（纯数字）','digital',{grade:'中学'})"
+            class="px-4 py-2 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50" data-i18n="btnAddToCart">
+            加入购物车
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
-      <div class="text-2xl mb-3">💱</div>
-      <div class="font-black text-slate-900" data-i18n="feat2Title">多币别结帐</div>
-      <div class="text-sm text-slate-600 mt-1" data-i18n="feat2Desc">预设 SGD；海外购买可切换 USD 并依即时汇率换算显示</div>
-    </div>
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
-      <div class="text-2xl mb-3">🔒</div>
-      <div class="font-black text-slate-900" data-i18n="feat3Title">单一装置登录</div>
-      <div class="text-sm text-slate-600 mt-1" data-i18n="feat3Desc">同帐号同时限一台装置登录，防止多人共用公用邮箱</div>
-    </div>
-    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card">
-      <div class="text-2xl mb-3">📦</div>
-      <div class="font-black text-slate-900" data-i18n="feat4Title">物流追踪</div>
-      <div class="text-sm text-slate-600 mt-1" data-i18n="feat4Desc">订单出货后显示单号，可直接前往物流查询货态</div>
-    </div>
+
+    <!-- Cart sidebar -->
+    <aside class="bg-white rounded-2xl border border-slate-200 p-5 shadow-card h-fit">
+      <div class="flex items-center justify-between">
+        <div class="text-lg font-black text-slate-900" data-i18n="cartTitle">购物车</div>
+        <button onclick="clearCart()" class="text-xs text-slate-500 hover:underline" data-i18n="cartClear">清空</button>
+      </div>
+      <div id="cartEmpty" class="mt-4 text-sm text-slate-400 border border-dashed border-slate-200 rounded-2xl p-4" data-i18n="cartEmpty2">尚未加入任何商品</div>
+      <div id="cartList" class="mt-4 hidden space-y-3"></div>
+
+      <!-- Currency note -->
+      <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-2xl text-xs text-blue-700">
+        💱 <span id="currencyNote">商品定价以新加坡币（SGD）显示</span>
+      </div>
+
+      <div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-600">
+        <div class="font-black text-slate-900" data-i18n="addOnRuleTitle">加购规则</div>
+        <div class="mt-1" data-i18n="addOnRuleDesc">加购品需先有对应年级套装（可检核购物车/历史订单）。不符合时，商品页会提示「需先买套装」。</div>
+      </div>
+
+      <div class="mt-5 pt-4 border-t border-slate-100 space-y-3">
+        <button onclick="checkout()" class="w-full py-3 rounded-2xl bg-emerald-600 text-white font-black hover:bg-emerald-700" data-i18n="btnCheckout">
+          前往结帐（线下交易示意）
+        </button>
+        <div class="text-[11px] text-slate-500 leading-relaxed" data-i18n="checkoutNote">
+          结帐需显示并同意：<span class="font-black">预约自取</span>、<span class="font-black">不退货</span>、<span class="font-black">14天瑕疵换货</span>。
+        </div>
+      </div>
+    </aside>
   </div>
 </main>
 
@@ -161,16 +215,13 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
     <div>
       <div class="font-black text-slate-900">EBIC</div>
-      <div class="text-sm text-slate-500 mt-2 leading-relaxed" data-i18n="footerDesc">
-        Prototype：前台电商 + 会员专区（登录后才可见：团队授权/书库/订单自取售后）。
-      </div>
+      <div class="text-sm text-slate-500 mt-2 leading-relaxed">Prototype：前台电商 + 会员专区。</div>
     </div>
     <div>
       <div class="font-black text-slate-900">政策</div>
       <ul class="mt-2 text-sm text-slate-600 space-y-2">
         <li><a href="policy.html" class="hover:underline">购买/自取/售后政策</a></li>
         <li><a href="policy.html" class="hover:underline">不退货与14天瑕疵换货</a></li>
-        <li><a href="policy.html" class="hover:underline">线下交易与核款</a></li>
       </ul>
     </div>
     <div>
@@ -201,8 +252,8 @@
   <div class="bg-white rounded-3xl shadow-card w-full max-w-md p-7 relative z-10 border border-slate-200">
     <div class="flex items-start justify-between gap-4">
       <div>
-        <div class="text-xs text-slate-400" data-i18n="loginSubtitle">登录（示意）</div>
-        <div class="text-xl font-black text-slate-900 mt-1" data-i18n="loginTitle">会员登录</div>
+        <div class="text-xs text-slate-400">登录（示意）</div>
+        <div class="text-xl font-black text-slate-900 mt-1">会员登录</div>
       </div>
       <button onclick="closeLogin()" class="text-slate-400 hover:text-slate-900">✕</button>
     </div>
@@ -212,20 +263,20 @@
         <input id="loginEmail" class="mt-1 w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" value="xiaoming.w@gmail.com" />
       </div>
       <div>
-        <label class="text-xs text-slate-500 font-bold" data-i18n="labelName">姓名</label>
+        <label class="text-xs text-slate-500 font-bold">姓名</label>
         <input id="loginName" class="mt-1 w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" value="王晓明" />
       </div>
       <div>
-        <label class="text-xs text-slate-500 font-bold" data-i18n="labelRole">角色（Prototype）</label>
+        <label class="text-xs text-slate-500 font-bold">角色（Prototype）</label>
         <select id="loginRole" class="mt-1 w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200">
-          <option value="teacher" data-i18n="roleTeacher">受邀教师</option>
-          <option value="churchAdmin" data-i18n="roleAdmin">教会管理员</option>
+          <option value="teacher">受邀教师</option>
+          <option value="churchAdmin">教会管理员</option>
         </select>
       </div>
     </div>
     <div class="mt-6 flex gap-3">
-      <button onclick="closeLogin()" class="flex-1 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50" data-i18n="btnCancel">取消</button>
-      <button onclick="login()" class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700" data-i18n="btnLogin">登录</button>
+      <button onclick="closeLogin()" class="flex-1 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50">取消</button>
+      <button onclick="login()" class="flex-1 py-3 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-700">登录</button>
     </div>
   </div>
 </div>
@@ -237,25 +288,25 @@
     <div class="flex items-start justify-between gap-4">
       <div>
         <div class="text-xs text-slate-400">购物车（示意）</div>
-        <div class="text-xl font-black text-slate-900 mt-1" data-i18n="cartModalTitle">你的购物车</div>
+        <div class="text-xl font-black text-slate-900 mt-1">你的购物车</div>
       </div>
       <button onclick="closeCart()" class="text-slate-400 hover:text-slate-900">✕</button>
     </div>
-    <div id="cartModalEmpty" class="mt-5 text-sm text-slate-400 border border-dashed border-slate-200 rounded-2xl p-4" data-i18n="cartModalEmpty">尚未加入任何商品</div>
+    <div id="cartModalEmpty" class="mt-5 text-sm text-slate-400 border border-dashed border-slate-200 rounded-2xl p-4">尚未加入任何商品</div>
     <div id="cartModalList" class="mt-5 hidden space-y-3"></div>
     <div class="mt-6 pt-5 border-t border-slate-100 space-y-3">
-        <div class="text-xs text-slate-500 leading-relaxed" data-i18n="cartCheckoutPolicy">
-        结帐政策：<span class="font-black">线下汇款</span>、<span class="font-black">预约自取</span>、<span class="font-black">不退货（14天瑞疵换货）</span>
-        </div>
+      <div class="text-xs text-slate-500 leading-relaxed">
+        结帐政策：<span class="font-black">线下汇款</span>、<span class="font-black">预约自取</span>、<span class="font-black">不退货（14天瑕疵换货）</span>
+      </div>
       <div class="flex gap-3">
-        <button onclick="clearCart()" class="flex-1 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50" data-i18n="btnCartClear">清空</button>
-        <button onclick="checkout()" class="flex-1 py-3 rounded-2xl bg-emerald-600 text-white font-black hover:bg-emerald-700" data-i18n="btnCartCheckout">前往结帐</button>
+        <button onclick="clearCart()" class="flex-1 py-3 rounded-2xl border border-slate-200 bg-white font-black hover:bg-slate-50">清空</button>
+        <button onclick="checkout()" class="flex-1 py-3 rounded-2xl bg-emerald-600 text-white font-black hover:bg-emerald-700">前往结帐</button>
       </div>
     </div>
   </div>
 </div>
 
 <script src="shared.js"></script>
-<script>pageInit('home');</script>
+<script>pageInit('products');</script>
 </body>
 </html>
